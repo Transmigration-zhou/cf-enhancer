@@ -164,13 +164,17 @@ function getTargetScript()
 	}
 }
 
-function runScript() {
-	script = document.createElement('script');
-	script.setAttribute("type", "application/javascript");
-	script.textContent = disableDefaultPlot(addAccountManage(addUnbind(getTargetScript().textContent)));
+function runScript(optColorize, optShowAttempts) {
+    const script = document.createElement('script');
+    script.setAttribute("type", "application/javascript");
+    
+    const wrappedColorize = function() {
+        colorize(optColorize, optShowAttempts);
+    };
 
-	document.body.appendChild(script);
-	document.body.removeChild(script);
+    window.wrappedColorize = wrappedColorize;
+    
+    document.addEventListener('DOMContentLoaded', wrappedColorize);
 }
 
 getOption("multiGraph", function(option, result) {

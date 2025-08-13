@@ -168,12 +168,19 @@ function colorize(optColorize, optShowAttempts)
 // The following part is executed in userjs scope.
 //
 function runScript(optColorize, optShowAttempts) {
-	script = document.createElement('script');
-	script.setAttribute("type", "application/javascript");
-	script.textContent = '$(document).ready(' + colorize + '(' + optColorize + ', ' + optShowAttempts + '));';
-
-	document.body.appendChild(script);
-	document.body.removeChild(script);
+    const wrappedColorize = function() {
+        $(document).ready(function() {
+            colorize(optColorize, optShowAttempts);
+        });
+    };
+    
+    window.wrappedColorize = wrappedColorize;
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', wrappedColorize);
+    } else {
+        wrappedColorize();
+    }
 }
 
 getOption("colorizeStandings", function(option, result) {
